@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { supabase } from "../../lib/supabase";
 import { useSearchParams } from "next/navigation";
 
@@ -14,6 +14,20 @@ type Cylinder = {
 };
 
 export default function ScanPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-6">
+          <p>Loading scan...</p>
+        </main>
+      }
+    >
+      <ScanContent />
+    </Suspense>
+  );
+}
+
+function ScanContent() {
   const searchParams = useSearchParams();
   const code = searchParams.get("code");
 
@@ -208,18 +222,9 @@ export default function ScanPage() {
         {cylinder && (
           <div className="space-y-3 mb-6">
             <Info label="Current Status" value={cylinder.status} />
-            <Info
-              label="Activated At"
-              value={cylinder.activated_at || "Not activated"}
-            />
-            <Info
-              label="Picked Up At"
-              value={cylinder.pickup_at || "Not picked up"}
-            />
-            <Info
-              label="Received At Lab"
-              value={cylinder.lab_received_at || "Not received"}
-            />
+            <Info label="Activated At" value={cylinder.activated_at || "Not activated"} />
+            <Info label="Picked Up At" value={cylinder.pickup_at || "Not picked up"} />
+            <Info label="Received At Lab" value={cylinder.lab_received_at || "Not received"} />
           </div>
         )}
 
